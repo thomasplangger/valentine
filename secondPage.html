@@ -3,259 +3,176 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Valentine?</title>
+  <title>One More Question</title>
   <style>
+    @import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@700;800&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap");
     :root{
-      --accent:#ff4d6d;
-      --accent-dark:#e63b5b;
-      --bg:#f4f5f7;
-      --text:#111827;
-      --muted:#6b7280;
-      --border:#e5e7eb;
+      --bg-1: #ffe6ef;
+      --bg-2: #fff6db;
+      --card: #ffffff;
+      --ink: #1f2937;
+      --accent: #ff4d6d;
+      --accent-dark: #e63b5b;
+      --line: #f1d4de;
     }
-    *{ box-sizing:border-box; }
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      background: var(--bg);
+      font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       min-height:100vh;
       display:flex;
       align-items:center;
       justify-content:center;
-      padding:24px;
-      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at -10% -20%, #ffd6e4 0%, transparent 60%),
+        radial-gradient(900px 500px at 110% 0%, #ffeec7 0%, transparent 55%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2));
+      color: var(--ink);
     }
-
-    .card{
-      width:min(560px, 100%);
-      background:#fff;
-      border:1px solid var(--border);
-      border-radius:18px;
-      box-shadow: 0 12px 32px rgba(0,0,0,.10);
-      overflow:hidden;
-    }
-
-    .content{
-      padding: 34px 22px 26px;
-      display:flex;
-      flex-direction:column;
-      gap:18px;
-      align-items:center;
-      justify-content:center;
+    .wrap{
       text-align:center;
+      padding:32px 30px 28px;
+      max-width:560px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      box-shadow: 0 22px 60px rgba(17, 24, 39, 0.12);
     }
-
     h1{
-      margin: 0;
-      font-size: clamp(28px, 4.6vw, 44px);
-      line-height:1.08;
-      font-weight: 900;
+      font-family: "Fraunces", "Times New Roman", serif;
+      font-size:42px;
+      margin:0 0 20px;
+      letter-spacing: .2px;
     }
-    h1 .name{
-      color: var(--accent);
-      display:inline-block;
-    }
-
-    p{
-      margin:0;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.4;
-    }
-
-    /* Area that constrains the moving button */
-    .playground{
-      position: relative;
-      width: 100%;
-      max-width: 520px;
-      height: 140px;
-      border-radius: 16px;
-      background: #fff;
-      padding: 14px;
-      overflow: hidden;
-    }
-
-    .btn{
-      border: 0;
-      border-radius: 12px;
-      padding: 12px 16px;
-      font-weight: 900;
-      cursor: pointer;
-      font-size: 14px;
-      user-select:none;
-      transition: transform .06s ease, filter .15s ease, background .15s ease;
-    }
-    .btn:active{ transform: scale(.99); }
-
-    /* same size buttons */
-    .btn-fixed{
-      width: 150px;
-      height: 44px;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-    }
-
-    .btn-yes{
-      background: var(--accent);
-      color: #fff;
-      box-shadow: 0 10px 20px rgba(0,0,0,.08);
-    }
-    .btn-yes:hover{ background: var(--accent-dark); }
-
-    .btn-no{
-      background: #f3f4f6;
-      color: #111827;
-      border: 1px solid #e5e7eb;
-      box-shadow: none;
-      position: absolute; /* moves within playground */
-      left: 50%;
-      top: 70%;
-      transform: translateX(10px); /* slight offset from center */
-    }
-    .btn-no:hover{ background:#eceef2; }
-
-    .row{
+    .buttons{
+      position:relative;
       display:flex;
-      gap: 12px;
-      align-items:center;
       justify-content:center;
-      height: 100%;
-    }
-
-    /* Success overlay */
-    .overlay{
-      position:fixed;
-      inset:0;
-      background: rgba(17,24,39,.55);
-      display:none;
       align-items:center;
-      justify-content:center;
-      padding:24px;
+      gap:18px;
+      flex-wrap:wrap;
+      min-height:52px;
     }
-    .overlay.show{ display:flex; }
-    .modal{
-      background:#fff;
-      border-radius:18px;
-      padding:22px 20px;
-      width:min(420px, 100%);
-      box-shadow: 0 18px 50px rgba(0,0,0,.25);
-      text-align:center;
-    }
-    .modal h2{
-      margin:0 0 8px;
-      font-size: 26px;
-      font-weight: 900;
-    }
-    .modal p{
-      margin: 0 0 14px;
-      color: var(--muted);
-      font-size: 14px;
-    }
-    .modal a{
+    .btn{
+      border:0;
+      border-radius:10px;
+      padding:12px 20px;
+      font-weight:800;
+      font-size:14px;
+      cursor:pointer;
+      text-decoration:none;
       display:inline-block;
+      box-shadow: 0 10px 18px rgba(0,0,0,0.08);
+      transition: transform .08s ease, box-shadow .12s ease, filter .12s ease;
+    }
+    .yes{
       background: var(--accent);
       color:#fff;
-      text-decoration:none;
-      font-weight:900;
-      padding: 10px 14px;
-      border-radius: 12px;
     }
-    .modal a:hover{ filter: brightness(.95); }
+    .yes:hover{ filter: brightness(.95); transform: translateY(-1px); }
+    .no{
+      background:#f3f4f6;
+      color:#111827;
+    }
+    .no:hover{ background:#e5e7eb; transform: translateY(-1px); }
+    .no-slot{
+      display:inline-block;
+    }
   </style>
 </head>
 <body>
-
-  <div class="card">
-    <div class="content">
-      <h1><span class="name">Aleza</span>, will you be my Valentine?</h1>
-      <p></p>
-
-      <div class="playground" id="playground" aria-label="button playground">
-        <div class="row" id="row">
-          <button class="btn btn-fixed btn-yes" id="yesBtn" type="button">Yes</button>
-          <!-- "No" is absolutely positioned but starts near the Yes button -->
-          <button class="btn btn-fixed btn-no" id="noBtn" type="button">No</button>
-        </div>
-      </div>
+  <div class="wrap">
+    <h1>Aleza, will you be my valentine</h1>
+    <div class="buttons">
+      <a class="btn yes" href="thirdPage.html">YES</a>
+      <span class="no-slot" id="noSlot" aria-hidden="true"></span>
+      <button class="btn no" type="button" id="noBtn">NO</button>
     </div>
   </div>
 
-  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="success">
-    <div class="modal">
-      <h2>Yeyyy 🥳</h2>
-      <p>Can’t wait!!</p>
-      <a href="index.html">Back</a>
-    </div>
-  </div>
+  <script>
+    const noBtn = document.getElementById("noBtn");
+    const noSlot = document.getElementById("noSlot");
+    const buttons = document.querySelector(".buttons");
+    let isDodging = false;
 
-<script>
-  const playground = document.getElementById("playground");
-  const noBtn = document.getElementById("noBtn");
-  const yesBtn = document.getElementById("yesBtn");
-  const overlay = document.getElementById("overlay");
+    function clamp(val, min, max){
+      return Math.min(Math.max(val, min), max);
+    }
 
-  // Smaller radius = only moves when REALLY close
-  const DODGE_RADIUS = 35;
+    function syncSlot(){
+      const rect = noBtn.getBoundingClientRect();
+      noSlot.style.width = rect.width + "px";
+      noSlot.style.height = rect.height + "px";
+      noSlot.style.minWidth = rect.width + "px";
+    }
 
-  function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+    function rectsOverlap(a, b){
+      return !(a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom);
+    }
 
-  function moveNoButtonRandomly(){
-    const pad = 8;
+    function dist(ax, ay, bx, by){
+      const dx = ax - bx;
+      const dy = ay - by;
+      return Math.hypot(dx, dy);
+    }
 
-    const area = playground.getBoundingClientRect();
-    const btn = noBtn.getBoundingClientRect();
+    function moveNoButton(e){
+      if (isDodging) return;
+      isDodging = true;
 
-    const maxX = area.width - btn.width - pad;
-    const maxY = area.height - btn.height - pad;
+      const container = buttons.getBoundingClientRect();
+      const btn = noBtn.getBoundingClientRect();
+      const yesBtn = document.querySelector(".yes").getBoundingClientRect();
+      const padding = 8;
 
-    const x = Math.random() * (maxX - pad) + pad;
-    const y = Math.random() * (maxY - pad) + pad;
+      const maxX = container.width - btn.width - padding * 2;
+      const maxY = container.height - btn.height - padding * 2;
+      const cursorX = e?.clientX ?? (container.left + container.width / 2);
+      const cursorY = e?.clientY ?? (container.top + container.height / 2);
 
-    noBtn.style.left = `${clamp(x, pad, maxX)}px`;
-    noBtn.style.top  = `${clamp(y, pad, maxY)}px`;
-    noBtn.style.transform = "none"; // stop translate offsets after first move
-  }
+      let x = padding;
+      let y = padding;
+      let attempts = 0;
+      let found = false;
+      let best = { x, y, d: -1 };
+      while (attempts < 40 && !found) {
+        x = Math.random() * maxX + padding;
+        y = Math.random() * maxY + padding;
+        const candidate = {
+          left: container.left + x,
+          right: container.left + x + btn.width,
+          top: container.top + y,
+          bottom: container.top + y + btn.height
+        };
+        if (!rectsOverlap(candidate, yesBtn)) {
+          const cx = candidate.left + btn.width / 2;
+          const cy = candidate.top + btn.height / 2;
+          const d = dist(cx, cy, cursorX, cursorY);
+          if (d > best.d) best = { x, y, d };
+          if (d > Math.min(container.width, container.height) * 0.45) {
+          found = true;
+          }
+        }
+        attempts += 1;
+      }
 
-  function onMouseMove(e){
-    const btnRect = noBtn.getBoundingClientRect();
-    const cx = btnRect.left + btnRect.width / 2;
-    const cy = btnRect.top + btnRect.height / 2;
+      noBtn.style.position = "absolute";
+      const finalX = found ? x : best.x;
+      const finalY = found ? y : best.y;
+      noBtn.style.left = clamp(finalX, padding, maxX + padding) + "px";
+      noBtn.style.top = clamp(finalY, padding, maxY + padding) + "px";
 
-    const dx = e.clientX - cx;
-    const dy = e.clientY - cy;
-    const dist = Math.sqrt(dx*dx + dy*dy);
+      setTimeout(() => { isDodging = false; }, 80);
+    }
 
-    if (dist < DODGE_RADIUS) moveNoButtonRandomly();
-  }
-
-  // Start "No" near the "Yes" button in a nice position
-  // (centered row; absolute positioning uses left/top so we set it once)
-  (function initNoPosition(){
-    const area = playground.getBoundingClientRect();
-    const btn = noBtn.getBoundingClientRect();
-    // place it roughly to the right of center
-    const x = (area.width / 2) + 20;
-    const y = (area.height / 2) - (btn.height / 2);
-    noBtn.style.left = `${x}px`;
-    noBtn.style.top  = `${y}px`;
-    noBtn.style.transform = "none";
-  })();
-
-  window.addEventListener("mousemove", onMouseMove);
-
-  // If it ever gets hovered/clicked, dodge too
-  noBtn.addEventListener("mouseenter", moveNoButtonRandomly);
-  noBtn.addEventListener("click", moveNoButtonRandomly);
-
-  yesBtn.addEventListener("click", () => {
-    overlay.classList.add("show");
-  });
-
-  overlay.addEventListener("click", (e) => {
-    if (e.target === overlay) overlay.classList.remove("show");
-  });
-</script>
-
+    syncSlot();
+    window.addEventListener("load", syncSlot);
+    window.addEventListener("resize", syncSlot);
+    noBtn.addEventListener("mouseenter", moveNoButton);
+    noBtn.addEventListener("focus", moveNoButton);
+    noBtn.addEventListener("click", () => {
+      alert("Nice try 😄");
+    });
+  </script>
 </body>
 </html>
