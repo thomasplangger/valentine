@@ -177,7 +177,7 @@
     <div class="header">
       <div class="small">Select all images with</div>
       <h1>your valentine</h1>
-      <p>Click verify once there are none left.</p>
+      <p>Click verify once you selected all.</p>
     </div>
 
     <div class="grid-wrap">
@@ -209,7 +209,7 @@
     { id: 9, src: "img/9.jpg" },
   ];
 
-const correctIds = new Set([1,2,3,4,5,6,7,8,9]);
+  const correctIds = new Set([1,2,3,4,5,6]);
 
   const grid = document.getElementById("grid");
   const verifyBtn = document.getElementById("verifyBtn");
@@ -231,9 +231,19 @@ const correctIds = new Set([1,2,3,4,5,6,7,8,9]);
     verifyBtn.disabled = selected.size === 0;
   }
 
+  function shuffle(list){
+    const arr = [...list];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
   function render(){
     grid.innerHTML = "";
-    tiles.forEach(t => {
+    const randomizedTiles = shuffle(tiles);
+    randomizedTiles.forEach(t => {
       const el = document.createElement("button");
       el.type = "button";
       el.className = "tile";
@@ -279,7 +289,7 @@ const correctIds = new Set([1,2,3,4,5,6,7,8,9]);
         window.location.href = "secondPage.html";
       }, 450);
     } else {
-      showToast("error", "Nope 😅 try again");
+      showToast("error", "Are you sure? :( maybe​ try again");
       // optional: auto-reset selection after wrong answer
       selected.clear();
       document.querySelectorAll(".tile.selected").forEach(t => t.classList.remove("selected"));
