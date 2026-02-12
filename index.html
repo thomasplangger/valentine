@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Totally Real Verification</title>
+  <style>
+    :root{
+      --card-w: 380px;
+      --accent: #ff4d6d;
+      --accent-dark: #e63b5b;
+      --bg: #f4f5f7;
+      --text: #111827;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 24px;
+    }
+    .card{
+      width: min(var(--card-w), 100%);
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow:hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,.08);
+    }
+    .header{
+      background: var(--accent);
+      color: white;
+      padding: 18px 18px 16px;
+    }
+    .header .small{
+      font-size: 12px;
+      opacity: .9;
+      margin-bottom: 6px;
+    }
+    .header h1{
+      font-size: 18px;
+      margin: 0;
+      line-height: 1.25;
+      font-weight: 800;
+    }
+    .header p{
+      margin: 6px 0 0;
+      font-size: 12px;
+      opacity: .9;
+    }
+
+    .grid-wrap{
+      padding: 14px;
+      background: #fff;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .tile{
+      position:relative;
+      border-radius: 10px;
+      overflow:hidden;
+      cursor:pointer;
+      border: 2px solid transparent;
+      aspect-ratio: 1 / 1;
+      background: #eee;
+      user-select:none;
+      transition: transform .06s ease, border-color .12s ease, box-shadow .12s ease;
+    }
+    .tile:active{ transform: scale(.99); }
+    .tile img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      display:block;
+    }
+    .tile.selected{
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59,130,246,.18);
+    }
+    .check{
+      position:absolute;
+      top:8px;
+      right:8px;
+      width:24px;
+      height:24px;
+      border-radius:999px;
+      background: rgba(59,130,246,.92);
+      color:white;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size: 14px;
+      font-weight: 900;
+      transform: scale(0);
+      transition: transform .12s ease;
+      box-shadow: 0 6px 16px rgba(0,0,0,.18);
+    }
+    .tile.selected .check{ transform: scale(1); }
+
+    .footer{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      padding: 12px 14px 14px;
+      border-top: 1px solid var(--border);
+      background: #fff;
+    }
+    .hint{
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.2;
+    }
+    .actions{
+      display:flex;
+      gap: 8px;
+      align-items:center;
+    }
+    button{
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-weight: 800;
+      cursor:pointer;
+      font-size: 12px;
+    }
+    .btn-secondary{
+      background: #f3f4f6;
+      color: #111827;
+    }
+    .btn-secondary:hover{ background:#e9eaee; }
+    .btn-primary{
+      background: var(--accent);
+      color:white;
+      min-width: 86px;
+    }
+    .btn-primary:hover{ background: var(--accent-dark); }
+    .btn-primary:disabled{
+      opacity:.6;
+      cursor:not-allowed;
+    }
+
+    .toast{
+      margin-top: 10px;
+      padding: 10px 12px;
+      font-size: 12px;
+      border-radius: 10px;
+      display:none;
+    }
+    .toast.error{
+      display:block;
+      background: #fff1f2;
+      border: 1px solid #fecdd3;
+      color: #9f1239;
+    }
+    .toast.ok{
+      display:block;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #065f46;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card" aria-label="Fake verification widget">
+    <div class="header">
+      <div class="small">Select all images with</div>
+      <h1>your valentine</h1>
+      <p>Click verify once there are none left.</p>
+    </div>
+
+    <div class="grid-wrap">
+      <div class="grid" id="grid"></div>
+      <div id="toast" class="toast"></div>
+    </div>
+
+    <div class="footer">
+      <div class="hint" id="hint">
+        Pick the correct photos, then hit <b>VERIFY</b>.
+      </div>
+      <div class="actions">
+        <button class="btn-secondary" id="resetBtn" type="button">RESET</button>
+        <button class="btn-primary" id="verifyBtn" type="button" disabled>VERIFY</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const tiles = [
+    { id: 1, src: "img/1.jpg" },
+    { id: 2, src: "img/2.jpg" },
+    { id: 3, src: "img/3.jpg" },
+    { id: 4, src: "img/4.jpg" },
+    { id: 5, src: "img/5.jpg" },
+    { id: 6, src: "img/6.jpg" },
+    { id: 7, src: "img/7.jpg" },
+    { id: 8, src: "img/8.jpg" },
+    { id: 9, src: "img/9.jpg" },
+  ];
+
+const correctIds = new Set([1,2,3,4,5,6,7,8,9]);
+
+  const grid = document.getElementById("grid");
+  const verifyBtn = document.getElementById("verifyBtn");
+  const resetBtn = document.getElementById("resetBtn");
+  const toast = document.getElementById("toast");
+
+  const selected = new Set();
+
+  function showToast(type, msg){
+    toast.className = "toast " + type;
+    toast.textContent = msg;
+    setTimeout(() => {
+      toast.className = "toast";
+      toast.textContent = "";
+    }, 1800);
+  }
+
+  function updateVerifyState(){
+    verifyBtn.disabled = selected.size === 0;
+  }
+
+  function render(){
+    grid.innerHTML = "";
+    tiles.forEach(t => {
+      const el = document.createElement("button");
+      el.type = "button";
+      el.className = "tile";
+      el.setAttribute("aria-label", "image tile " + t.id);
+
+      const img = document.createElement("img");
+      img.src = t.src;
+      img.alt = "tile " + t.id;
+
+      const check = document.createElement("div");
+      check.className = "check";
+      check.textContent = "✓";
+
+      el.appendChild(img);
+      el.appendChild(check);
+
+      el.addEventListener("click", () => {
+        if (selected.has(t.id)) {
+          selected.delete(t.id);
+          el.classList.remove("selected");
+        } else {
+          selected.add(t.id);
+          el.classList.add("selected");
+        }
+        updateVerifyState();
+      });
+
+      grid.appendChild(el);
+    });
+  }
+
+  function setsEqual(aSet, bSet){
+    if (aSet.size !== bSet.size) return false;
+    for (const v of aSet) if (!bSet.has(v)) return false;
+    return true;
+  }
+
+  verifyBtn.addEventListener("click", () => {
+    if (setsEqual(selected, correctIds)) {
+      showToast("ok", "Verified ✅");
+      // small delay so the toast is visible
+      setTimeout(() => {
+        window.location.href = "secondPage.html";
+      }, 450);
+    } else {
+      showToast("error", "Nope 😅 try again");
+      // optional: auto-reset selection after wrong answer
+      selected.clear();
+      document.querySelectorAll(".tile.selected").forEach(t => t.classList.remove("selected"));
+      updateVerifyState();
+    }
+  });
+
+  resetBtn.addEventListener("click", () => {
+    selected.clear();
+    document.querySelectorAll(".tile.selected").forEach(t => t.classList.remove("selected"));
+    updateVerifyState();
+    showToast("ok", "Reset.");
+  });
+
+  render();
+  updateVerifyState();
+</script>
+</body>
+</html>
